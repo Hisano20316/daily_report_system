@@ -58,6 +58,7 @@ public class TopAction extends ActionBase {
             removeSessionScope(AttributeConst.FLUSH);
         }
 
+
         //一覧画面を表示
         forward(ForwardConst.FW_TOP_INDEX);
     }

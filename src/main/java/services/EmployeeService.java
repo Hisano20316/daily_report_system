@@ -57,10 +57,11 @@ public class EmployeeService extends ServiceBase {
             String pass = EncryptUtil.getPasswordEncrypt(plainPass, pepper);
 
             //社員番号とハッシュ化済パスワードを条件に未削除の従業員を1件取得する
-            e = em.createNamedQuery(JpaConst.Q_EMP_GET_BY_CODE_AND_PASS, Employee.class)
-                    .setParameter(JpaConst.JPQL_PARM_CODE, code)
-                    .setParameter(JpaConst.JPQL_PARM_PASSWORD, pass)
+            e = em.createNamedQuery(JpaConst.Q_EMP_GET_BY_CODE_AND_PASS, Employee.class)//ENTITY_EMP("employee") + ".getByCodeAndPass"
+                    .setParameter(JpaConst.JPQL_PARM_CODE, code)//"code"社員番号
+                    .setParameter(JpaConst.JPQL_PARM_PASSWORD, pass)//"password"パスワード
                     .getSingleResult();
+            // "SELECT e FROM Employee AS e WHERE e.deleteFlag = 0 AND e.code = :" + JPQL_PARM_CODE + " AND e.password = :" + JPQL_PARM_PASSWORD;
 
         } catch (NoResultException ex) {
         }
@@ -76,6 +77,14 @@ public class EmployeeService extends ServiceBase {
      */
     public EmployeeView findOne(int id) {
         Employee e = findOneInternal(id);
+        return EmployeeConverter.toView(e);
+    }
+
+    /*
+     * codeを条件に取得したデータをEmployeeViewのインスタンスで返却する
+     * */
+    public EmployeeView findOneCode(int code) {
+        Employee e = findOneCodeInternal(code);
         return EmployeeConverter.toView(e);
     }
 
@@ -227,6 +236,14 @@ public class EmployeeService extends ServiceBase {
     private Employee findOneInternal(int id) {
         Employee e = em.find(Employee.class, id);
 
+        return e;
+    }
+
+    /*
+     * codeを条件にデータを1件取得し、Employeeのインスタンスで返却する
+     * */
+    private Employee findOneCodeInternal(int code) {
+        Employee e = em.find(Employee.class,code);
         return e;
     }
 
